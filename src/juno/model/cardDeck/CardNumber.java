@@ -17,13 +17,18 @@ public class CardNumber extends Card {
 	public CardNumber (Color color, Number number) {
 		this.color = color;
 		this.number = number;
+		this.type = "Number";
+	}
+	
+	public String getType() {
+		return this.type;
 	}
 	
 	@Override
 	public int getScore() {
 		return this.getNumber().getNumberInt();
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.getColor() + " " + this.getNumber();

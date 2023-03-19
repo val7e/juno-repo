@@ -15,6 +15,12 @@ public class CardJolly extends Card {
 	 */
 	public CardJolly (Jolly jolly) {
 		this.jolly = jolly;
+		this.type = "Jolly";
+		this.color = null;
+	}
+	
+	public String getType() {
+		return this.type;
 	}
 	
 	private final int score = 50;

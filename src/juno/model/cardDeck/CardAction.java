@@ -18,9 +18,14 @@ public class CardAction extends Card {
 	public CardAction (Color color, Action action) {
 		this.color = color;
 		this.action = action;
+		this.type = "Action";
 	}
 	
 	private final int score = 20;
+	
+	public String getType() {
+		return this.type;
+	}
 	
 	@Override
 	public int getScore() {

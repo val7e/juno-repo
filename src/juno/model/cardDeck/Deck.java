@@ -14,7 +14,7 @@ import java.util.Stack;
  */
 public class Deck {
 	private Stack<Card> deck;
-	private int totalCards = 108; //mi serve effettivamente??
+	private int totalCards = 108; //mi serve effettivamente?? si per checkare se sta finendo
 	
 	/**
 	 * Constructor method that invokes other methods to add every type of card to the deck.
@@ -24,7 +24,7 @@ public class Deck {
 		this.addNumberCards();
 		this.addActionCards();
 		this.addJollyCards();
-//		System.out.println(this.deck);
+		this.shuffleCards();
 	}
 	
 	/**
@@ -99,10 +99,31 @@ public class Deck {
 		return deck.pop();
 	}
 	
-	public Stack<Card> getPlayerHand() {
-		Stack<Card> playerHand = new Stack<Card>();
+	/**
+	 * This method is invoked if the first card drawn from the deck is invalid,
+	 * so it restarts the deck.
+	 * @param card
+	 */
+	public void restartInvalidDeck(Card card) {
+		deck.add(card);
+		shuffleCards();
+	}
+	
+	public int getDeckSize() {
+		return deck.size();
+	}
+	
+	public ArrayList<Card> getPlayerHand() {
+		ArrayList<Card> playerHand = new ArrayList<Card>();
 		for (int i = 0; i < 7; i++) {
 			playerHand.add(drawCard());
 		} return playerHand;
+	}
+	
+	public boolean checkInvalidInitCard(Card card) {
+		if (card.getType().equals("Jolly") && card.getJolly()==Jolly.JOLLYPESCAQUATTRO) {
+			System.out.println("Can't start game with card " + card.getJolly());
+			return true;
+		} else return false;
 	}
 }

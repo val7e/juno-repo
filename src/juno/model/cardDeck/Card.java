@@ -12,6 +12,7 @@ public abstract class Card {
 	protected Action action;
 	protected Number number;
 	protected Jolly jolly;
+	protected String type;
 	protected int score;
 	
 	public Color getColor() {
@@ -28,6 +29,10 @@ public abstract class Card {
 	
 	public Jolly getJolly() {
 		return this.jolly;
+	}
+	
+	public String getType() {
+		return this.type;
 	}
 	
 	public abstract String toString();
