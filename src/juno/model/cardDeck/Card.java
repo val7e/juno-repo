@@ -7,35 +7,33 @@ package juno.model.cardDeck;
  * @author val7e
  *
  */
-public abstract class Card {
-	protected Color color;
-	protected Action action;
-	protected Number number;
-	protected Jolly jolly;
-	protected String type;
-	protected int score;
-	
-	public Color getColor() {
-		return this.color;
-	}
-	
-	public Number getNumber() {
-		return this.number;
-	}
-	
-	public Action getAction() {
-		return this.action;
-	}
-	
-	public Jolly getJolly() {
-		return this.jolly;
-	}
-	
-	public String getType() {
-		return this.type;
-	}
-	
-	public abstract String toString();
-	
-	public abstract int getScore();
+public class Card {
+    
+    private final Color color;
+    private final Value value;
+    private int score;
+
+    public Card(Color color, Value value, int score) {
+        this.color = color;
+        this.value = value;
+        this.score = score;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Value getValue() {
+        return value;
+    }
+    
+    public int getScore() {
+    	return score;
+    }
+
+    @Override
+    public String toString() {
+        return color + "_" + value;
+    }
 }
+

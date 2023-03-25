@@ -1,35 +1,54 @@
 package juno.model.cardPlayers;
 
+import juno.model.cardDeck.*;
+import java.util.ArrayList;
+
 public class Player {
-	protected String nickname;
-	protected Avatar avatar;
-	protected String level;
-	protected boolean isHuman;
-	protected int gamesWon;
-	protected int gamesLost;
-	protected int expPoints = 1;
-	
-	public Player(String nickname, boolean isHuman, Avatar avatar) {
-		this.nickname = nickname;
-		this.isHuman = isHuman;
-		this.avatar = avatar;
-		this.level = "Newbie";
-	}
-	
-	
-	public String getNickname() {
-		return this.nickname;
-	}
-	
-	public Avatar getAvatar() {
-		return this.avatar;
-	}
-	
-	public boolean isHuman() {
-		return this.isHuman;
-	}
-	
-	public String getLevel() {
+    private final String nickname;
+    private String avatar;
+    protected final ArrayList<Card> hand;
+    private String level;
+	private int gamesWon;
+	private int gamesLost;
+	private int expPoints = 1;
+
+    public Player(String nickname) {
+        this.nickname = nickname;
+        this.hand = new ArrayList<Card>();
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
+
+    public void addCardToHand(Card card) {
+        hand.add(card);
+    }
+    
+    public Card playCard(Color color, Value value) {
+        for (Card card : hand) {
+            if (card.getColor() == color && card.getValue() == value) {
+                hand.remove(card);
+                return card;
+            }
+        }
+        return null;
+    }
+
+    public void removeCard(Card card) {
+        hand.remove(card);
+    }
+
+    public int getHandSize() {
+        return hand.size();
+    }
+
+    
+    public String getLevel() {
 		return this.level;
 	}
 	
@@ -64,8 +83,11 @@ public class Player {
 		if (expPoints >= 4096) this.level = "Advanced";
 	}
 	
-	public String toString() {
-		return this.getNickname();
-	}
-	
+//    public Card getCard(int index) {
+//        return hand.get(index);
+//    }
+//
+//    public boolean hasCard(Card card) {
+//        return hand.contains(card);
+//    }
 }

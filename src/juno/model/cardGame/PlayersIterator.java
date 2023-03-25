@@ -5,40 +5,42 @@ package juno.model.cardGame;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import juno.model.cardDeck.Card;
 import juno.model.cardPlayers.*;
+
 
 /**
  * @author val7e
  *
  */
 public class PlayersIterator {
-	private Player[] players;
+	private List<Player> players;
+	private HashMap<String, List<Card>> handsMap;
 	private int current = 0;
 	private Direction direction = Direction.CLOCKWISE;
 	
-	public PlayersIterator(Player[] players) {
+	public PlayersIterator(List<Player> players) {
 		this.players = players;
+		this.handsMap = new HashMap<String, List<Card>>();
 	}
 	
 	/**
 	 * This method returns a stream of the players nicknames.
 	 * @return
 	 */
-	public Stream<Player> stream() {
-		return Arrays.stream(players);
-		
-	}
+//	public Stream<Player> stream() {
+//		return Arrays.stream(players);
+//		
+//	}
 	
-	public Player[] getPlayers(){
+	public List<Player> getPlayers(){
 		return players;
 	}
 	
 	public Player getCurrentPlayer() {
-		return players[current];
+		return players.get(current);
 	}
 	
 	/**
@@ -51,13 +53,18 @@ public class PlayersIterator {
 	
 	public int getNextPlayerIndex() {
 		var increment = direction == Direction.CLOCKWISE ? 1 : -1;
-		return (players.length + current + increment) % players.length;
+		return (players.size() + current + increment) % players.size();
 	}
 	
 	public Player nextPlayer() {
 		current = getNextPlayerIndex();
 		return getCurrentPlayer();
 	}
+	
+	public HashMap<String, List<Card>> getHandsMap() {
+		return handsMap;
+	}
+	
 	
 	
 }

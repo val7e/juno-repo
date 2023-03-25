@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class DeprecatedDeck {
 	
-	private ArrayList<Card> deck;
+	private ArrayList<DeprecCard> deck;
 	private int totalCards = 108;
 	
 	public DeprecatedDeck() {
-		this.deck = new ArrayList<Card>(totalCards);
+		this.deck = new ArrayList<DeprecCard>(totalCards);
 		this.addNumberCards();
 		this.addActionCards();
 		this.addJollyCards();
@@ -24,10 +24,10 @@ public class DeprecatedDeck {
 	private void addNumberCards() {
 		
 		for (int i = 0; i < Color.values().length; i++) {
-			for (int j = 0; j < Number.values().length; j++) {
-				deck.add(new CardNumber(Color.values()[i], Number.values()[j]));
+			for (int j = 0; j < DeprecNumber.values().length; j++) {
+				deck.add(new DeprecCardNumber(Color.values()[i], DeprecNumber.values()[j]));
 				if (j > 0) {
-					deck.add(new CardNumber(Color.values()[i], Number.values()[j]));
+					deck.add(new DeprecCardNumber(Color.values()[i], DeprecNumber.values()[j]));
 				}
 			}
 		}
@@ -42,9 +42,9 @@ public class DeprecatedDeck {
 	 */
 	private void addActionCards() {
 		for (int i = 0; i < Color.values().length; i++) {
-			for (int j = 0; j < Action.values().length; j++) {
-				deck.add(new CardAction(Color.values()[i], Action.values()[j]));
-				deck.add(new CardAction(Color.values()[i], Action.values()[j]));
+			for (int j = 0; j < DeprecAction.values().length; j++) {
+				deck.add(new DeprecCardAction(Color.values()[i], DeprecAction.values()[j]));
+				deck.add(new DeprecCardAction(Color.values()[i], DeprecAction.values()[j]));
 			}
 		}
 	}
@@ -56,9 +56,9 @@ public class DeprecatedDeck {
 	 *    for a total of 8 jolly cards
 	 */
 	private void addJollyCards() {
-		for (int i = 0; i < Jolly.values().length; i++) {
+		for (int i = 0; i < DeprecJolly.values().length; i++) {
 			for (int j = 0; j < 4; j++) {
-				deck.add(new CardJolly(Jolly.values()[i]));
+				deck.add(new DeprecCardJolly(DeprecJolly.values()[i]));
 			}
 		}
 	}

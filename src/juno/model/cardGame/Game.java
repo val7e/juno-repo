@@ -1,115 +1,124 @@
-package juno.model.cardGame;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import juno.model.cardDeck.Card;
-import juno.model.cardDeck.CardJolly;
-import juno.model.cardDeck.Color;
-import juno.model.cardDeck.Deck;
-import juno.model.cardDeck.Jolly;
-import juno.model.cardPlayers.Player;
-import juno.model.cardPlayers.Avatar;
-
 /**
  * 
+ */
+package juno.model.cardGame;
+import java.util.List;
+import java.util.ArrayList;
+
+import juno.model.cardDeck.*;
+import juno.model.cardPlayers.*;
+/**
  * @author val7e
- * 
- * The field currentDeck is the deck of the game
- * The field discardDeck is the pile of discard cards
  *
  */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Game {
-	
-	private Deck currentDeck = new Deck();
-	private Stack<Card> discardDeck = new Stack<Card>();
-	private Player[] players;
-	
-	
-	private static TreeMap<String, List<Card>> playersHands = new TreeMap<String, List<Card>>();
-	
-	public Game(Deck currentDeck) {
-		this.currentDeck = currentDeck;
-	}
-	/**
-	 * This method initialize the game following these points:
-	 * 1. gives 7 cards for each player in players
-	 * 2. it extracts the initial card from the currentDeck
-	 * 3. adds the initial card to the discardDeck
-	 * 4. invokes getPlayableCards, a class method that filters each players hand to find the playable cards
-	 */
-	
-	public void start(String user) {
-		
-		//costruisco lista di Player
-		players = initPlayers(user);
-		
-		//costruisco iteratore dei giocatori
-		PlayersIterator iterator = new PlayersIterator(players);
-		
-		//costruisco le mani dei giocatori con l'iteratore
-		playersHands = getPlayersHands(currentDeck, iterator);
-		System.out.println(playersHands);
-		
-		//pesco la prima carta
-//		Card drawnCard = currentDeck.drawCard();
-		Card drawnCard = new CardJolly(Jolly.JOLLYPESCAQUATTRO);
-		System.out.println("2. " + drawnCard);
-		
-		//aggiungo controllo isValidCard (pesca4 non valido)
-		if (currentDeck.checkInvalidInitCard(drawnCard)) {
-			currentDeck.restartInvalidDeck(drawnCard);
-			drawnCard = currentDeck.drawCard();
-		}
-		
-		
-		//scarto la prima carta
-		discardDeck.add(drawnCard);
-		System.out.println("3. " + discardDeck);
-		
-		List<Card> playableCards = getPlayableCards(drawnCard, iterator);
-		
-		System.out.println(playableCards);
-		
-		
-	}
-	
-	/**
-	 * This method creates a Player array
-	 * @param name of the only real player of the game
-	 * @return
-	 */
-	public Player[] initPlayers(String name) {
-		Player playerUser = new Player(name, true, Avatar.USER);
-		Player playerBot0 = new Player("jim", false, Avatar.JIM);
-		Player playerBot1 = new Player("pam", false, Avatar.PAM);	
-		Player playerBot2 = new Player("dwight", false, Avatar.DWIGHT);
-			
-		Player[] builtPlayers = {playerUser, playerBot0, playerBot1, playerBot2};
-		return builtPlayers;
-	}
-	
-	public TreeMap<String, List<Card>> getPlayersHands(Deck currentDeck, PlayersIterator iterator) {
-		
-		for (Player p : iterator.getPlayers()) {
-			playersHands.put(p.getNickname(), currentDeck.getPlayerHand());
-		}
-		return playersHands;
-		
-	}
-	
-	public List<Card> getPlayableCards(Card drawnCard, PlayersIterator iterator) {
-		var card = drawnCard.getType().equals("Action")? drawnCard.getAction() :
-			drawnCard.getType().equals("Jolly")? drawnCard.getJolly() : drawnCard.getNumber();
-		
-		var currentPlayer = iterator.getCurrentPlayer().getNickname();
-		System.out.println(currentPlayer + playersHands.get(iterator.getCurrentPlayer().getNickname()));
-		var playableCards = playersHands.get(iterator.getCurrentPlayer().getNickname())
-				.stream().filter(w -> w.getNumber()==card || w.getAction()==card || w.getColor()==drawnCard.getColor() || w.getType()=="Jolly").collect(Collectors.toList());
-		return playableCards.stream().filter(x->x.getColor()==drawnCard.getColor()).count()>0? 
-			       playableCards.stream().filter(x->x.getJolly()!=Jolly.JOLLYPESCAQUATTRO).collect(Collectors.toList()):playableCards;
-	}
+    private final List<Player> players;
+    private final Deck deck;
+    private final List<Card> discardPile;
+    private Color currentColor;
+    private boolean reverseOrder;
+    private boolean skipNextPlayer;
+    private boolean drawTwoNextPlayer;
+    private boolean drawFourNextPlayer;
+
+    public Game(List<Player> players) {
+        this.players = players;
+        this.deck = new Deck();
+        this.discardPile = new ArrayList<>();
+        this.currentColor = null;
+        this.reverseOrder = false;
+        this.skipNextPlayer = false;
+        this.drawTwoNextPlayer = false;
+        this.drawFourNextPlayer = false;
+    }
+
+    public void startGame() {
+        // Shuffle the deck and deal cards to each player
+        deck.shuffleCards();
+        for (Player player : players) {
+            for (int i = 0; i < 7; i++) {
+                player.addCardToHand(deck.drawCard());
+            }
+        }
+
+        // Place the first card on the discard pile
+        Card firstCard = deck.drawCard();
+        while (firstCard.getValue().equals(Value.PESCA_QUATTRO)) {
+            // If the first card is an action card or a wild card, keep drawing cards until it's a number card
+            deck.restartInvalidDeck(firstCard);
+            firstCard = deck.drawCard();
+        }
+        discardPile.add(firstCard);
+        currentColor = firstCard.getColor();
+
+        // Start the game
+        int currentPlayerIndex = 0;
+        while (true) {
+            Player currentPlayer = players.get(currentPlayerIndex);
+
+            // Check if the game is over
+            if (currentPlayer.getHandSize() == 0) {
+                System.out.println(currentPlayer.getNickname() + " wins!");
+                break;
+            }
+
+            // Print the game state
+            System.out.println("Current player: " + currentPlayer.getNickname());
+            System.out.println("Current card: " + discardPile.get(discardPile.size() - 1));
+            System.out.println("Current color: " + currentColor);
+            System.out.println("Players:");
+            for (Player player : players) {
+                System.out.println(player.getNickname() + ": " + player.getHandSize() + " cards");
+            }
+
+            // Check if the next player needs to be skipped or needs to draw cards
+            if (skipNextPlayer) {
+                System.out.println("Skipping next player");
+                skipNextPlayer = false;
+                currentPlayerIndex = getNextPlayerIndex(currentPlayerIndex);
+                continue;
+            }
+            if (drawTwoNextPlayer) {
+                System.out.println("Drawing two cards and skipping next player");
+                currentPlayer.addCardToHand(deck.drawCard());
+                currentPlayer.addCardToHand(deck.drawCard());
+                drawTwoNextPlayer = false;
+                skipNextPlayer = true;
+                currentPlayerIndex = getNextPlayerIndex(currentPlayerIndex);
+                continue;
+            }
+            if (drawFourNextPlayer) {
+                System.out.println("Drawing four cards and skipping next player");
+                currentPlayer.addCardToHand(deck.drawCard());
+                currentPlayer.addCardToHand(deck.drawCard());
+                currentPlayer.addCardToHand(deck.drawCard());
+                currentPlayer.addCardToHand(deck.drawCard());
+                drawFourNextPlayer = false;
+                skipNextPlayer = true;
+                currentPlayerIndex = getNextPlayerIndex(currentPlayerIndex);
+                continue;
+            }
+
+            // Get the player's move
+            Card cardToPlay = currentPlayer.playCard(discardPile.get(discardPile.size() - 1), currentColor);
+            if (cardToPlay == null) {
+                System.out.println(currentPlayer.getName() + " draws a card");
+                currentPlayer.addCardToHand(deck.drawCard());
+                continue;
+            }
+
+            //
+            
+            
+        }
+        
+        
+    }
+    
+
 }
+

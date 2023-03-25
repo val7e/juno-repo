@@ -2,7 +2,7 @@ package juno.model.cardGame;
 import juno.model.cardDeck.*;
 
 public class CardsRules {
-	public static void whichCard(Card card, int size) {
+	public static void whichCard(CardDeprecated card, int size) {
 		switch (card.getType()) {
 		case "NUMBER": {
 			System.out.println("prossimo giocatore");
@@ -19,13 +19,13 @@ public class CardsRules {
 			}
 		}
 		case "JOLLY": {
-			if (card.getJolly() == Jolly.JOLLYCOLORE) {
+			if (card.getJolly() == DeprecJolly.JOLLYCOLORE) {
 				System.out.println("currentPlayer sceglie il nuovo colore");
 			}
-			if (card.getJolly() == Jolly.JOLLYPESCAQUATTRO && size > 1) {
+			if (card.getJolly() == DeprecJolly.JOLLYPESCAQUATTRO && size > 1) {
 				System.out.println("currentPlayer sceglie il colore e nextPlayer pesca 4 carte e salta il turno");
 			}
-			if (card.getJolly() == Jolly.JOLLYPESCAQUATTRO && size == 1) {
+			if (card.getJolly() == DeprecJolly.JOLLYPESCAQUATTRO && size == 1) {
 				System.out.println("carta non valida, si rimette nel mazzo e si rimischia");
 			}
 		}

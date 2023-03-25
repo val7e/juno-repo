@@ -6,4 +6,5 @@
  *
  */
 module JUno {
+	requires java.desktop;
 }
